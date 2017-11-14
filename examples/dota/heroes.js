@@ -31,13 +31,18 @@ class Hero {
 			if(this.mainAttribute == 'S') damage += i.strength;
 		})
 
-		console.log("Damage:"+damage+" AS: "+as);
+		//console.log("Damage:"+damage+" AS: "+as);
 
 		return damage * as;
 	}
 }
 
 huskar = new Hero('Huskar', 100, 106, 1.2);
+slark = new Hero('Slark', 80, 86, 1.6);
+brewmaster = new Hero('Brewmaster', 95, 112, 1.2);
+ancient = new Hero('Ancient', 70, 86, 0.8);
+doom = new Hero('Doom', 112, 114, 1.0);
+
 heroes = {
-	huskar
+	huskar, slark, brewmaster, ancient, doom
 }
