@@ -61,5 +61,6 @@ heroes = [
 	new Hero('Slark', 80, 86, 1.6),
 	new Hero('Brewmaster', 95, 112, 1.2),
 	new Hero('Ancient', 70, 86, 0.8),
-	new Hero('Doom', 112, 114, 1.0)
+	new Hero('Doom', 112, 114, 1.0),
+	new Hero('Sven', 130, 146, 0.8),
 ]

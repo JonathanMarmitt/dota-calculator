@@ -1,4 +1,7 @@
 bestHeroes = new Array();
+configs = {};
+numItems = 0;
+to = null;
 
 $(document).ready(function(){
 	$('#clickit').click(function(){
@@ -11,19 +14,36 @@ $(document).ready(function(){
 		console.log(numItems + " " + popSize + " " + generations + " " + mutability + " " + popDie);
 		
 		// para cara hero, executa o ambiente uma vez
-		for(i = 0; i < 1/*heroes.length*/; i++){
-			Environment.name = "Enviroiment for hero "+heroes[i].name;
-			Environment.configure({'populationSize':popSize,
-				                   'generations':generations,
-				                   'mutability':mutability,
-				                   'populationDieOff':popDie,
-				                   'heroIndex': i});
-			Environment.Individual.chromosomeLength = numItems;
-			Environment.Individual.heroIndex = i;
-			Environment.init();
-		}
+		configs = {'populationSize':popSize,
+                   'generations':generations,
+                   'mutability':mutability,
+                   'populationDieOff':popDie,
+                   'heroIndex': 0};
+
+		callEnvironment(0, configs, numItems);
+		// Environment.name = "Enviroiment for hero "+heroes[i].name;
+		// Environment.configure({'populationSize':popSize,
+		// 	                   'generations':generations,
+		// 	                   'mutability':mutability,
+		// 	                   'populationDieOff':popDie,
+		// 	                   'heroIndex': i});
+		// Environment.Individual.chromosomeLength = numItems;
+		// Environment.Individual.heroIndex = i;
+		// Environment.init();
+		//}
 	});
 });
+
+function callEnvironment(heroIndex, configs, numItems){
+	if(heroes[heroIndex] != undefined){
+		Environment.name = "Enviroiment for hero "+heroes[heroIndex].name;
+		Environment.configure(configs);
+		Environment.Individual.chromosomeLength = numItems;
+		Environment.heroIndex = heroIndex;
+		Environment.init();
+		console.log(Environment.name, heroIndex);
+	}
+}
 
 /**
  * Responsável pelo debug
@@ -126,13 +146,16 @@ Environment.beforeGeneration = function(generation) {
  */
 Environment.afterGeneration = function(generation) {
 	Environment.fitnessFunction(Environment.inhabitants[0],true);
-	setTimeout("Environment.generation()",100);
+	to = setTimeout("Environment.generation()",100);
 
 	$('#generation').html(generation);
 
 	if(generation == ($('#numGenerations').val() - 1))
 	{
 		let h = bestHeroes[Environment.heroIndex];
-		$("#best-ones").append("Hero: "+h.hero.name+" Best hit: "+h.dmg+" Items: "+h.hero.getItemsText()+"<br>");
+		$("#best-ones").append("Hero: "+h.hero.name+" Best hit: "+h.dmg.toFixed(2)+" Items: "+h.hero.getItemsText()+"<br>");
+
+		callEnvironment(Environment.heroIndex+1, configs, numItems);
+		clearInterval(to);
 	}
 };
