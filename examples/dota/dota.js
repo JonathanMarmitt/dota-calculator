@@ -1,14 +1,8 @@
-/**
-  Sera uma populacao para cada hero diferente, e a ideia é que para cada populacao, seja encontrato
-  a melhor combinacao.
-
-  Populacao inicial: um hero com 6 itens sorteados aleatoriamente = um individuo
-  
- */
+bestHeroes = new Array();
 
 $(document).ready(function(){
 	$('#clickit').click(function(){
-		numItems =  $('#numItems').val(); // isso vai representar quantos itens cada heroi vai ter
+		numItems =  $('#numItems').val();
 		var popSize = $('#populationSize').val();
 		var generations = $('#numGenerations').val();
 		var mutability = ($('#mutabilityPercent').val()%100)/100;
@@ -17,37 +11,30 @@ $(document).ready(function(){
 		console.log(numItems + " " + popSize + " " + generations + " " + mutability + " " + popDie);
 		
 		// para cara hero, executa o ambiente uma vez
-		var heroIndex;
-		for(i = 0; i < Object.keys(heroes).length; i++){
-			heroIndex = i;
-
-			Environment.name = "Enviroiment for hero "+heroes[heroIndex].name;
+		for(i = 0; i < 1/*heroes.length*/; i++){
+			Environment.name = "Enviroiment for hero "+heroes[i].name;
 			Environment.configure({'populationSize':popSize,
 				                   'generations':generations,
 				                   'mutability':mutability,
-				                   'populationDieOff':popDie });
+				                   'populationDieOff':popDie,
+				                   'heroIndex': i});
 			Environment.Individual.chromosomeLength = numItems;
+			Environment.Individual.heroIndex = i;
 			Environment.init();
 		}
 	});
 });
 
-//FIXME
-//Environment.inhabitants = usar o heroi em questao, e sortear itens pra ele, sendo essa a populacao inicial
-
-// function drawMap(generation){
-// 	var ctx = document.getElementById('gacanvas');	
-// 	ctx = ctx.getContext('2d');
-// 	ctx.clearRect(0,0,mapSize+50,mapSize);
-// 	ctx.beginPath();
-// 	ctx.rect(0,0,mapSize,mapSize);
-// 	ctx.stroke();
-// 	ctx.fillText(generation,200,20);
-// }
-
-// function distanceTo(pointA, pointB){
-// 	return Math.sqrt(Math.pow(pointB[0]-pointA[0],2) + Math.pow(pointB[1]-pointA[1],2));
-// }
+/**
+ * Responsável pelo debug
+ */
+function simulate(generation, hero){
+	if(hero){
+		$("#simulation").append("Hero "+hero.name+" hitted "+hero.calculateHit().toFixed(2)+" - items: "+hero.getItemsText()+"<br>");
+	}
+	else
+		$("#simulation").append("Geração: "+generation+"<br>");
+}
 
 /**
  * This is a function that must be overriden. It takes in an individual as it's argument and returns the 
@@ -56,21 +43,37 @@ $(document).ready(function(){
 Environment.fitnessFunction = function(individual, draw){
 	fitness = 0;
 
+	// Faz um clone do objeto que representa o herói
+	original = heroes[Environment.heroIndex];
+	let hero = Object.assign(Object.create(original), original);
+
+	// Atribui a quantidade de itens definida
 	for(var i = 0; i < individual.chromosomeLength; i++){
-		console.log(i)
-		//var x = individual.chromosome[i];
-		//var y = individual.chromosome[i+1];
-		//distanceToMid = distanceTo([x,y], circleMid);
-		//fitness += Math.abs(circleRadius-distanceToMid);
-		
-		hero = heroes[heroIndex];
 		item = items[individual.chromosome[i]];
 
 		hero.addItem(item);
 	}
 
 	dmg = hero.calculateHit();
-	console.log(dmg);
+
+	simulate(null, hero);
+
+	// guarda a melhor combinacao do hero
+	if(! bestHeroes[Environment.heroIndex] ){
+		// cria se nao existe
+		bestHeroes[Environment.heroIndex] = {};
+		bestHeroes[Environment.heroIndex].dmg = dmg;
+		bestHeroes[Environment.heroIndex].hero = hero;
+	}
+	else
+	{
+		//substitui se o novo individuo e melhor
+		if(bestHeroes[Environment.heroIndex].dmg < dmg)
+		{
+			bestHeroes[Environment.heroIndex].hero = hero;
+			bestHeroes[Environment.heroIndex].dmg = dmg;
+		}
+	}
 
 	return dmg;
 }
@@ -82,33 +85,31 @@ Environment.fitnessFunction = function(individual, draw){
  * Specify my individual - including chromosome length, mate, and init
  */
 Environment.Individual = function(){
-        this.fitness = 0;
-        this.chromosomeLength = numItems;
-        this.chromosome = new Array();
-        this.mate = function(mutability, mate){
-                if (!mate.chromosome){
-                        throw "Mate does not have a chromosome";
-                }
+    this.fitness = 0;
+    this.chromosomeLength = numItems;
+    this.chromosome = new Array();
+    this.mate = function(mutability, mate){
+            if (!mate.chromosome){
+                throw "Mate does not have a chromosome";
+            }
 
-                var newGuy = new Environment.Individual();
-                newGuy.chromosome = this.chromosome.slice(0,Math.floor(this.chromosomeLength)).concat(mate.chromosome.slice(Math.floor(this.chromosomeLength)));
-                // chromosome: metade dos cromossomos do individuo atual e metade do proximo individuo
+            // O novo individuo sera composto de metade dos itens do individo atual, e outra metade do próximo
+            var newGuy = new Environment.Individual();
+            newGuy.chromosome = this.chromosome.slice(0,Math.floor(this.chromosomeLength)).concat(mate.chromosome.slice(Math.floor(this.chromosomeLength)));
 
-                //FIXME: ver como aplicar mutacao
-                // while (Math.random() < mutability){
-                //     var mutateIndex = Math.floor(Math.random()*this.chromosomeLength); //a random gene will be mutated;                     
-                //     newGuy.chromosome[mutateIndex] = Math.random()*mapSize;
+            // Sorteia itens aleatórios para serem substituidos
+            while (Math.random() < mutability){
+                var mutateIndex = Math.floor(Math.random() * this.chromosomeLength); //a random gene will be mutated;                     
+                newGuy.chromosome[mutateIndex] = parseInt(Math.random() * items.length);
+            }
 
-                // }
-
-                return newGuy;
-        }
-        
-        // aqui gera o individuo, tem que sortear os itens pra cada...
-        for (var i = 0; i < this.chromosomeLength; i++){
-            this.chromosome.push(parseInt(Math.random() * items.length)); //sorteia um item aleatorio
-        }
-        console.log(this.chromosome);
+            return newGuy;
+    }
+    
+    // Aqui os itens são definidos para cada herói, aleatoriamente
+    for (var i = 0; i < this.chromosomeLength; i++){
+        this.chromosome.push(parseInt(Math.random() * items.length));
+    }
 }
 
 /**
@@ -116,7 +117,7 @@ Environment.Individual = function(){
  * is computed. Required for iterative mode functionality.
  */ 
 Environment.beforeGeneration = function(generation) {
-	// drawMap(generation);
+	simulate(generation);
 }
 
 /**
@@ -126,4 +127,12 @@ Environment.beforeGeneration = function(generation) {
 Environment.afterGeneration = function(generation) {
 	Environment.fitnessFunction(Environment.inhabitants[0],true);
 	setTimeout("Environment.generation()",100);
+
+	$('#generation').html(generation);
+
+	if(generation == ($('#numGenerations').val() - 1))
+	{
+		let h = bestHeroes[Environment.heroIndex];
+		$("#best-ones").append("Hero: "+h.hero.name+" Best hit: "+h.dmg+" Items: "+h.hero.getItemsText()+"<br>");
+	}
 };
