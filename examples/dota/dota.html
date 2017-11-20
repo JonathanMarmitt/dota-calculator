@@ -6,42 +6,54 @@
 	<script src='heroes.js'></script>
 	<script src='item.js'></script>
 	<script src='dota.js'></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 	<!-- <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js" charset="utf-8"></script> -->
 	<!-- <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script> -->
 	<!-- <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script> -->
 	<!-- <script src='interface/item-list.js' type="text/babel"></script> -->
 </head>
 <body>
-	<div style="width: 50%; float: left;">
-		<h4>Parameters</h4>
-		<label for="numPoints">Items quantity</label>
-		<input type="text" id="numItems" value='2'></input>
-		<br />
-		<label for="numGenerations">Number of generations</label>
-		<input type="text" id="numGenerations" value='100'></input>
-		<br />
-		<label for="mutabilityPercent" >Mutability percent</label>
-		<input type="text" id="mutabilityPercent" value='20'></input>
-		<br />
-		<label for="populationSize">Population Size</label>
-		<input type="text" id="populationSize" value='20'></input>
-		<br />
-		<label for="populationDieOff">Percent of Population Death Per
-			Generation</label>
-		<input type="text" id="populationDieOff" value='70'></input>
-		<br />
-		<a id='clickit' href="#">evolve</a>
-		<br />
-		<h4>Melhores</h4>
-		<div id="best-ones">
-		</div>
+	<div style="width: 45%; float: left;">
+		<fieldset>
+			<legend>Parâmetros</legend>
+			<div class="row">
+				<div class="input-field col s3">
+					<input type="text" id="numItems" value='2'></input>
+					<label for="numPoints">Quantidade de Itens</label>
+				</div>
+				<div class="input-field col s5">
+					<input type="text" id="numGenerations" value='100'></input>
+					<label for="numGenerations">Nº de Gerações</label>
+				</div>
+				<div class="input-field col s4">
+					<input type="text" id="mutabilityPercent" value='20'></input>
+					<label for="mutabilityPercent" >Percentual de mutabilidade</label>
+				</div>
+				<div class="input-field col s4">
+					<input type="text" id="populationSize" value='20'></input>
+					<label for="populationSize">Tamanho da população</label>
+				</div>
+				<div class="input-field col s8">
+					<input type="text" id="populationDieOff" value='70'></input>
+					<label for="populationDieOff">Percentual da População Morto por Geração</label>
+				</div>
+				<a class="waves-effect waves-light btn" id="clickit">Gerar</a>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Melhores</legend>
+			<div id="best-ones"></div>
+		</fieldset>
 	</div>
-	<div style="width: 50%; float: right; height: 300px;">
-		<h4>Simulation</h4>
-		<b>Geração atual:</b><span id="generation"></span>
-		<div id="simulation" style="max-height: 400px; overflow-y: scroll;">
+	<fieldset style="width: 50%; float: right; height: 500px;">
+		<legend>Simulação</legend>
+		<div class="row">
+			<div style="float: left;"><b>Geração atual:</b><span id="generation"></span></div>
+			<div style="float: right; margin-right: 50%;"><b>Herói atual:</b><span id="hero"></span></div>
 		</div>
-	</div>
-	
+		<div id="simulation" class="row" style="max-height: 400px; overflow-y: scroll;">
+		</div>
+	</fieldset>
 </body>
 </html>

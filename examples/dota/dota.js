@@ -13,7 +13,8 @@ $(document).ready(function(){
 
 		console.log(numItems + " " + popSize + " " + generations + " " + mutability + " " + popDie);
 		
-		// para cara hero, executa o ambiente uma vez
+		toggleBtnOff();
+
 		configs = {'populationSize':popSize,
                    'generations':generations,
                    'mutability':mutability,
@@ -21,18 +22,16 @@ $(document).ready(function(){
                    'heroIndex': 0};
 
 		callEnvironment(0, configs, numItems);
-		// Environment.name = "Enviroiment for hero "+heroes[i].name;
-		// Environment.configure({'populationSize':popSize,
-		// 	                   'generations':generations,
-		// 	                   'mutability':mutability,
-		// 	                   'populationDieOff':popDie,
-		// 	                   'heroIndex': i});
-		// Environment.Individual.chromosomeLength = numItems;
-		// Environment.Individual.heroIndex = i;
-		// Environment.init();
-		//}
 	});
 });
+
+function toggleBtnOn(){
+	btn = $('#clickit').html("Gerar").removeClass('disabled');
+}
+
+function toggleBtnOff(){
+	btn = $('#clickit').html("Gerando...").addClass("disabled")
+}
 
 function callEnvironment(heroIndex, configs, numItems){
 	if(heroes[heroIndex] != undefined){
@@ -42,6 +41,8 @@ function callEnvironment(heroIndex, configs, numItems){
 		Environment.heroIndex = heroIndex;
 		Environment.init();
 		console.log(Environment.name, heroIndex);
+
+		$('#hero').html(heroes[heroIndex].name);
 	}
 }
 
@@ -151,11 +152,21 @@ Environment.afterGeneration = function(generation) {
 	$('#generation').html(generation);
 
 	if(generation == ($('#numGenerations').val() - 1))
-	{
-		let h = bestHeroes[Environment.heroIndex];
-		$("#best-ones").append("Hero: "+h.hero.name+" Best hit: "+h.dmg.toFixed(2)+" Items: "+h.hero.getItemsText()+"<br>");
-
-		callEnvironment(Environment.heroIndex+1, configs, numItems);
-		clearInterval(to);
-	}
+		endEnviroiment();
 };
+
+function endEnviroiment(){
+	let h = bestHeroes[Environment.heroIndex];
+	$("#best-ones").append("Hero: "+h.hero.name+" Best hit: "+h.dmg.toFixed(2)+" Items: "+h.hero.getItemsText()+"<br>");
+
+	callEnvironment(Environment.heroIndex+1, configs, numItems);
+	clearInterval(to);
+
+	if(Environment.heroIndex == (heroes.length - 1))
+		endAll();
+}
+
+function endAll(){
+	console.log('end');
+	toggleBtnOn();
+}
