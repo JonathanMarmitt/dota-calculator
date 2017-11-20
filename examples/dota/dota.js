@@ -54,12 +54,12 @@ function simulate(generation, hero){
 		$("#simulation").append("Hero "+hero.name+" hitted "+hero.calculateHit().toFixed(2)+" - items: "+hero.getItemsText()+"<br>");
 	}
 	else
-		$("#simulation").append("Geração: "+generation+"<br>");
+		$("#simulation").append("<b>Geração: "+generation+"</b><br>");
 }
 
 /**
- * This is a function that must be overriden. It takes in an individual as it's argument and returns the 
- * fitness of that individual. Required.
+ * Aqui é calculado o fitness de cada indivíduo, conceitualmente presente em todo algoritmo genético
+ * No nosso caso, o fitness é o dano de um hit do herói
  */
 Environment.fitnessFunction = function(individual, draw){
 	fitness = 0;
@@ -77,6 +77,7 @@ Environment.fitnessFunction = function(individual, draw){
 
 	dmg = hero.calculateHit();
 
+	// Representação visual
 	simulate(null, hero);
 
 	// guarda a melhor combinacao do hero
@@ -118,9 +119,12 @@ Environment.Individual = function(){
             var newGuy = new Environment.Individual();
             newGuy.chromosome = this.chromosome.slice(0,Math.floor(this.chromosomeLength)).concat(mate.chromosome.slice(Math.floor(this.chromosomeLength)));
 
-            // Sorteia itens aleatórios para serem substituidos
+            /**
+             * Esta parte é a mutação do individuo, que pode ocorrer mais de uma vez para o mesmo
+             * Um item aleatório é escolhido para ser substituido, que é substituido também por um item aleatório
+             */
             while (Math.random() < mutability){
-                var mutateIndex = Math.floor(Math.random() * this.chromosomeLength); //a random gene will be mutated;                     
+                var mutateIndex = Math.floor(Math.random() * this.chromosomeLength); 
                 newGuy.chromosome[mutateIndex] = parseInt(Math.random() * items.length);
             }
 
@@ -167,6 +171,7 @@ function endEnviroiment(){
 }
 
 function endAll(){
-	console.log('end');
 	toggleBtnOn();
+	$('#generation').html("");
+	$('#hero').html("");
 }
