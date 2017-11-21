@@ -40,7 +40,7 @@ class Hero {
 			as += i.atackSpeed;
 
 			if(this.mainAttribute == 'A') damage += i.agility;
-			if(this.mainAttribute == 'I') damage += i.intelligente;
+			if(this.mainAttribute == 'I') damage += i.intelligence;
 			if(this.mainAttribute == 'S') damage += i.strength;
 		})
 

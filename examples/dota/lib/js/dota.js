@@ -40,7 +40,7 @@ function callEnvironment(heroIndex, configs, numItems){
 		Environment.Individual.chromosomeLength = numItems;
 		Environment.heroIndex = heroIndex;
 		Environment.init();
-		console.log(Environment.name, heroIndex);
+		//console.log(Environment.name, heroIndex);
 
 		$('#hero').html(heroes[heroIndex].name);
 	}
@@ -163,14 +163,17 @@ function endEnviroiment(){
 	let h = bestHeroes[Environment.heroIndex];
 	$("#best-ones").append("Hero: "+h.hero.name+" Best hit: "+h.dmg.toFixed(2)+" Items: "+h.hero.getItemsText()+"<br>");
 
-	callEnvironment(Environment.heroIndex+1, configs, numItems);
-	clearInterval(to);
-
 	if(Environment.heroIndex == (heroes.length - 1))
 		endAll();
+	else
+	{
+		clearInterval(to);
+		callEnvironment(Environment.heroIndex+1, configs, numItems);
+	}
 }
 
 function endAll(){
+	console.log('chamou');
 	toggleBtnOn();
 	$('#generation').html("");
 	$('#hero').html("");

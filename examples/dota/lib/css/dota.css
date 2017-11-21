@@ -1,0 +1,9 @@
+.item {
+	border-radius: 40%;
+	background: #cccccc;
+	padding: 2px;
+	font-size: 12px;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin: 4px;
+}
