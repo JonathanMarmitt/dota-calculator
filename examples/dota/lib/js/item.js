@@ -1,10 +1,10 @@
 class Item{
-	constructor(name, damage = 0, atackSpeed = 0, intelligence = 0, strentgh = 0, agility = 0, critical = 0){
+	constructor(name, damage = 0, atackSpeed = 0, intelligence = 0, strength = 0, agility = 0, critical = 0){
 		this.name = name;
 		this.damage = damage;
 		this.atackSpeed = atackSpeed;
 		this.intelligence = intelligence;
-		this.strentgh = strentgh;
+		this.strength = strength;
 		this.agility = agility;
 		this.critical = critical;
 
